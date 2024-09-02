@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://www.csoonline.com/wp-content/uploads/2023/06/eye-binary-abstract-100749562-orig.jpg?quality=50&strip=all" type="image/x-icon">
+    <title>Display Data</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            margin: 50px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 36px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        th {
+            background-color: rgba(143, 171, 197);
+            color: rgb(9, 31, 51);
+            text-align: center;
+        }
+
+        button {
+            margin-top: 20px;
+            margin-left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: bolder;
+            border: none;
+            border-radius: 15px;
+            background-color: #ffffff;
+            color: rgb(9, 31, 51);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        /* Progress bar styles */
+        #progress-container {
+            width: 50%;
+            margin: 20px auto;
+            background-color: #f3f3f3;
+            border-radius: 15px;
+            display: none;
+        }
+
+        #progress-bar {
+            width: 0;
+            height: 30px;
+            background-color: #4caf50;
+            border-radius: 15px;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
+    </style>
+</head>
+<body style="background-image: url('https://img.freepik.com/premium-photo/milk-paint-dark-blue-wall-background_146508-4946.jpg'); background-repeat: no-repeat; background-size: cover;">
+    <div class="container">
+        <h1>Uploaded Log Data</h1>
+        <button id="trainButton">Train Model</button>
+        <div id="progress-container">
+            <div id="progress-bar">0%</div>
+        </div>
+        <table id="data-table">
+            <thead id="table-head">
+                <!-- Table headers will be dynamically added here -->
+            </thead>
+            <tbody id="table-body">
+                <!-- Table rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                const tableHead = document.getElementById('table-head');
+                const tableBody = document.getElementById('table-body');
+
+                if (data.length > 0) {
+                    // Create table headers
+                    const headers = Object.keys(data[0]);
+                    let headerRow = '<tr>';
+                    headers.forEach(header => {
+                        headerRow += `<th>${header}</th>`;
+                    });
+                    headerRow += '</tr>';
+                    tableHead.innerHTML = headerRow;
+
+                    // Create table rows
+                    let rows = '';
+                    data.forEach(row => {
+                        let rowHTML = '<tr>';
+                        headers.forEach(header => {
+                            rowHTML += `<td>${row[header]}</td>`;
+                        });
+                        rowHTML += '</tr>';
+                        rows += rowHTML;
+                    });
+                    tableBody.innerHTML = rows;
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="5">No data available</td></tr>';
+                }
+            })
+            .catch(error => console.error('Error fetching data:', error));
+
+        document.getElementById('trainButton').addEventListener('click', async () => {
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            
+            // Show the progress bar
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+
+            // Simulate progress (since we don't have real-time updates, we use a timeout here)
+            let progress = 0;
+            const interval = setInterval(() => {
+                if (progress >= 100) {
+                    clearInterval(interval);
+                } else {
+                    progress += 10;
+                    progressBar.style.width = `${progress}%`;
+                    progressBar.textContent = `${progress}%`;
+                }
+            }, 1500); // Update every 0.5 seconds
+
+            try {
+                const resp = await fetch('/train', {
+                    method: 'POST'
+                });
+
+                if (resp.ok) {
+                    clearInterval(interval);
+                    progressBar.style.width = '100%';
+                    progressBar.textContent = '100%';
+                    alert('Training completed successfully!!');
+                    window.location.href = 'http://localhost:5000/';
+                } else {
+                    clearInterval(interval);
+                    alert('Failed to start training.');
+                }
+            } catch (error) {
+                clearInterval(interval);
+                console.error('Error:', error);
+                alert('Error starting training.');
+            } finally {
+                // Hide the progress bar after completion
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 2000); // Wait 2 seconds before hiding
+            }
+        });
+    </script>
+</body>
+</html>
