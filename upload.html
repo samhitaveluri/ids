@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload</title>
+    <link rel="icon" href="https://www.csoonline.com/wp-content/uploads/2023/06/eye-binary-abstract-100749562-orig.jpg?quality=50&strip=all" type="image/x-icon">
+    <style>
+        body {
+            background-image: url('https://img.freepik.com/premium-photo/milk-paint-dark-blue-wall-background_146508-4946.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .upload-form {
+            background-color: rgba(143, 171, 197, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: rgb(9, 31, 51);
+            font-size: 50px;
+            margin: 0;
+            padding: 20px;
+        }
+
+        form {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload {
+            border: 2px solid #ccc;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            background-color: #f5f4de;
+            font-size: 20px;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #e0e0e0;
+        }
+
+        #train {
+            font-size: 15px;
+            background-color: #f5f4de;
+            font-family: Verdana;
+            font-weight: bold;
+        }
+
+        #train:hover {
+            background-color: #a0a0a0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="upload-form">
+        <h1>Upload Log Datasets</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <label for="fileToUpload" id="fileLabel" class="custom-file-upload">Choose CSV File</label>
+            <input type="file" name="fileToUpload" id="fileToUpload" onchange="updateLabel()">
+            <br><br>
+            <input type="submit" id="train" value="Submit">
+        </form>
+    </div>
+</div>
+<script>
+    function updateLabel() {
+        var label = document.getElementById('fileLabel');
+        var file = document.getElementById('fileToUpload').files[0];
+        label.innerHTML = file.name;
+    }
+</script>
+</body>
+</html>
